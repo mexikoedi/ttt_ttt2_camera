@@ -1,0 +1,11 @@
+{
+    "title": "TTT/TTT2 Detective Camera",
+    "type": "weapon",
+    "tags": "fun",
+    "description": "Use this to watch people get killed live. Left Click to place.",
+    "ignore": [
+        "*.psd",
+        "*.vcproj",
+        "*.svn"
+    ]
+}
