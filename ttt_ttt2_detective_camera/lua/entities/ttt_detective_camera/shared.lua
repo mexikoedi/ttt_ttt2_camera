@@ -1,3 +1,4 @@
+if engine.ActiveGamemode( ) != "terrortown" then return end
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.PrintName = "Detective Camera"
