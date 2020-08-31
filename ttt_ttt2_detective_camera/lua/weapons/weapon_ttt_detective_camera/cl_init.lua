@@ -1,3 +1,4 @@
+if engine.ActiveGamemode( ) != "terrortown" then return end
 include( "shared.lua" )
 SWEP.PrintName = "Detective Camera"
 SWEP.Slot = 7
