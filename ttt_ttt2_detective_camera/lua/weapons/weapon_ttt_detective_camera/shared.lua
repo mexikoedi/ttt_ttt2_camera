@@ -1,3 +1,4 @@
+if engine.ActiveGamemode( ) != "terrortown" then return end
 SWEP.Base = "weapon_tttbase"
 SWEP.Author = "mexikoedi"
 SWEP.HoldType = "normal"
