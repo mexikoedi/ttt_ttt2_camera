@@ -1,3 +1,4 @@
+if engine.ActiveGamemode( ) != "terrortown" then return end
 include( "shared.lua" )
 
 function ENT:Draw( )
