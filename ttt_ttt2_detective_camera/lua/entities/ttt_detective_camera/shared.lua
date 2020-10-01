@@ -48,15 +48,13 @@ if SERVER then
 
     hook.Add( "SetupMove" , "TTTCamera.Rotate" , function( ply , mv )
         for _ , v in ipairs( ents.FindByClass( "ttt_detective_camera" ) ) do
-            if v.GetPlayer && v.GetShouldPitch then
-                if IsValid( v:GetPlayer( ) ) && v:GetPlayer( ) == ply && v:GetShouldPitch( ) && ply:Alive( ) then
+            if v.GetPlayer && v.GetShouldPitch && IsValid( v:GetPlayer( ) ) && v:GetPlayer( ) == ply && v:GetShouldPitch( ) && ply:Alive( ) then
                     local ang = v:GetAngles( )
                     ang:RotateAroundAxis( ang:Right( ) , ply:GetCurrentCommand( ):GetMouseY( ) * -.15 )
                     ang.p = math.Clamp( ang.p , -75 , 75 )
                     ang.r = 0
                     ang.y = v.OriginalY
                     v:SetAngles( ang )
-                end
             end
         end
     end )
@@ -64,22 +62,18 @@ end
 
 hook.Add( "PlayerSwitchWeapon" , "TTTCamera.RotateNoSwitch" , function( ply )
     for _ , v in ipairs( ents.FindByClass( "ttt_detective_camera" ) ) do
-        if v.GetPlayer && v.GetShouldPitch then
-            if IsValid( v:GetPlayer( ) ) && v:GetPlayer( ) == ply && v:GetShouldPitch( ) && ply:Alive( ) then return true end
-        end
+        if v.GetPlayer && v.GetShouldPitch && IsValid( v:GetPlayer( ) ) && v:GetPlayer( ) == ply && v:GetShouldPitch( ) && ply:Alive( ) then return true end
     end
 end )
 
 if CLIENT then
     hook.Add( "CreateMove" , "TTTCamera.Rotate" , function( cmd )
         for _ , v in ipairs( ents.FindByClass( "ttt_detective_camera" ) ) do
-            if v.GetPlayer then
-                if IsValid( v:GetPlayer( ) ) && v:GetPlayer( ) == LocalPlayer( ) && v:GetShouldPitch( ) && LocalPlayer( ):Alive( ) then
+            if v.GetPlayer && IsValid( v:GetPlayer( ) ) && v:GetPlayer( ) == LocalPlayer( ) && v:GetShouldPitch( ) && LocalPlayer( ):Alive( ) then
                     local ang = ( v:GetPos( ) - LocalPlayer( ):EyePos( ) ):Angle( )
                     local ang2 = Angle( math.NormalizeAngle( ang.p ) , math.NormalizeAngle( ang.y ) , math.NormalizeAngle( ang.r ) )
                     cmd:SetViewAngles( ang2 )
                     cmd:ClearMovement( )
-                end
             end
         end
     end )
