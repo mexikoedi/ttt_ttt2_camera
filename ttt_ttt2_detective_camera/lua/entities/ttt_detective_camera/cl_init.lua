@@ -19,8 +19,7 @@ hook.Add( "HUDPaint" , "DrawCameraScreen" , function( )
     local x = ScrW( ) / 3.7
 
     for k , ent in ipairs( ents.FindByClass( "ttt_detective_camera" ) ) do
-        if IsValid( ent ) && ent:GetPlayer( ) == LocalPlayer( ) && ent:GetWelded( ) && LocalPlayer( ):Alive( ) then
-            if !RENDER_CONNECTION_LOST then
+        if IsValid( ent ) && ent:GetPlayer( ) == LocalPlayer( ) && ent:GetWelded( ) && LocalPlayer( ):Alive( ) && !RENDER_CONNECTION_LOST then
                 cam.Start2D( )
                 IN_CAMERA = true
                 LocalPlayer( ):DrawShadow( false )
@@ -42,7 +41,6 @@ hook.Add( "HUDPaint" , "DrawCameraScreen" , function( )
                 surface.SetDrawColor( Color( 255 , 255 , 255 , 3 ) )
                 surface.SetMaterial( NOISE )
                 surface.DrawTexturedRect( ScrW( ) - x - 16 , 14 , ScrW( ) / 3.7 - 2 , ScrH( ) / 3.7 - 2 )
-            end
         end
     end
 
