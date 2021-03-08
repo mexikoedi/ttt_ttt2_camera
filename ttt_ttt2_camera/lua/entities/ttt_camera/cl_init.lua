@@ -19,6 +19,9 @@ hook.Add("HUDPaint", "DrawCameraScreen", function()
     local x = ScrW() / 3.7
 
     for k, ent in ipairs(ents.FindByClass("ttt_camera")) do
+        if LocalPlayer():IsSpec() then return end
+        if GetRoundState() ~= ROUND_ACTIVE then return end
+
         if IsValid(ent) and ent:GetPlayer() == LocalPlayer() and ent:GetWelded() and LocalPlayer():Alive() and not RENDER_CONNECTION_LOST then
             cam.Start2D()
             IN_CAMERA = true
