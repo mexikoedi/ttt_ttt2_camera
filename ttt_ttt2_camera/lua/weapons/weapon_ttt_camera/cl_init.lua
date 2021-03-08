@@ -1,14 +1,14 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
 include("shared.lua")
-SWEP.PrintName = "Detective Camera"
+SWEP.PrintName = "Camera"
 SWEP.Slot = 7
 SWEP.ViewModelFOV = 10
 SWEP.ViewModelFlip = false
-SWEP.Icon = "vgui/ttt/weapon_detective_camera"
+SWEP.Icon = "vgui/ttt/weapon_camera"
 
 SWEP.EquipMenuData = {
     type = "item_weapon",
-    name = "Detective Camera",
+    name = "Camera",
     desc = "Use this to watch people get killed live. Left Click to place."
 }
 
@@ -49,7 +49,7 @@ end
 net.Receive("TTTCamera.Instructions", function()
     local p = LocalPlayer()
 
-    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_detective_camera")) then
-        p:GetWeapon("weapon_ttt_detective_camera").DrawInstructions = false
+    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_camera")) then
+        p:GetWeapon("weapon_ttt_camera").DrawInstructions = false
     end
 end)
