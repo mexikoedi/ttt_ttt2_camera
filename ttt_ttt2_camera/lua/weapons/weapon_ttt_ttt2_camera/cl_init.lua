@@ -49,7 +49,7 @@ end
 net.Receive("TTTCamera.Instructions", function()
     local p = LocalPlayer()
 
-    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_camera")) then
-        p:GetWeapon("weapon_ttt_camera").DrawInstructions = false
+    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then
+        p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = false
     end
 end)
