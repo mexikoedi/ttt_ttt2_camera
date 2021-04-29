@@ -18,7 +18,7 @@ local NOISE = Material("tttcamera/cameranoise")
 hook.Add("HUDPaint", "DrawCameraScreen", function()
     local x = ScrW() / 3.7
 
-    for k, ent in ipairs(ents.FindByClass("ttt_camera")) do
+    for k, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         if LocalPlayer():IsSpec() then return end
         if GetRoundState() ~= ROUND_ACTIVE then return end
 
