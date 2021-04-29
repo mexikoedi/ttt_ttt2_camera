@@ -41,13 +41,13 @@ end
 
 if SERVER then
     hook.Add("SetupPlayerVisibility", "TTTCamera.VISLEAF", function()
-        for k, v in ipairs(ents.FindByClass("ttt_camera")) do
+        for k, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
             AddOriginToPVS(v:GetPos() + v:GetAngles():Forward() * 3)
         end
     end)
 
     hook.Add("SetupMove", "TTTCamera.Rotate", function(ply, mv)
-        for _, v in ipairs(ents.FindByClass("ttt_camera")) do
+        for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
             if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:Alive() then
                 local ang = v:GetAngles()
                 ang:RotateAroundAxis(ang:Right(), ply:GetCurrentCommand():GetMouseY() * -.15)
@@ -61,14 +61,14 @@ if SERVER then
 end
 
 hook.Add("PlayerSwitchWeapon", "TTTCamera.RotateNoSwitch", function(ply)
-    for _, v in ipairs(ents.FindByClass("ttt_camera")) do
+    for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:Alive() then return true end
     end
 end)
 
 if CLIENT then
     hook.Add("CreateMove", "TTTCamera.Rotate", function(cmd)
-        for _, v in ipairs(ents.FindByClass("ttt_camera")) do
+        for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
             if v.GetPlayer and IsValid(v:GetPlayer()) and v:GetPlayer() == LocalPlayer() and v:GetShouldPitch() and LocalPlayer():Alive() then
                 local ang = (v:GetPos() - LocalPlayer():EyePos()):Angle()
                 local ang2 = Angle(math.NormalizeAngle(ang.p), math.NormalizeAngle(ang.y), math.NormalizeAngle(ang.r))
@@ -80,6 +80,6 @@ if CLIENT then
 end
 
 hook.Add("ShouldCollide", "TTTCamera.Collide", function(e1, e2)
-    if e1:IsPlayer() and e2:GetClass() == "ttt_camera" then return true end
-    if e2:IsPlayer() and e1:GetClass() == "ttt_camera" then return true end
+    if e1:IsPlayer() and e2:GetClass() == "ent_ttt_ttt2_camera" then return true end
+    if e2:IsPlayer() and e1:GetClass() == "ent_ttt_ttt2_camera" then return true end
 end)
