@@ -1,3 +1,5 @@
+if engine.ActiveGamemode() ~= "terrortown" then return end
+
 if CLIENT then
     -- Use string or string.format("%.f",<steamid64>) 
     -- addon dev emblem in scoreboard
