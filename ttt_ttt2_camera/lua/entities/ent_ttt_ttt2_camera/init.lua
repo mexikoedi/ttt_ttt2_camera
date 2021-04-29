@@ -10,10 +10,10 @@ function ENT:Use(user)
         self:Remove()
 
         if not self:GetShouldPitch() then
-            user:Give("weapon_ttt_camera")
+            user:Give("weapon_ttt_ttt2_camera")
         else
-            user:GetWeapon("weapon_ttt_camera").camera:SetShouldPitch(false)
-            user:GetWeapon("weapon_ttt_camera").camera:Remove()
+            user:GetWeapon("weapon_ttt_ttt2_camera").camera:SetShouldPitch(false)
+            user:GetWeapon("weapon_ttt_ttt2_camera").camera:Remove()
             net.Start("TTTCamera.Instructions")
             net.Send(user)
         end
