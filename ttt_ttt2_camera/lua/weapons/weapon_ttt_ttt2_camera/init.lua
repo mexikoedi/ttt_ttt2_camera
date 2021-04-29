@@ -25,7 +25,7 @@ function SWEP:PrimaryAttack()
     end
 
     if tr.HitWorld and not self.camera then
-        local camera = ents.Create("ttt_camera")
+        local camera = ents.Create("ent_ttt_ttt2_camera")
         camera:SetPlayer(self:GetOwner())
         camera:SetPos(tr.HitPos - self:GetOwner():EyeAngles():Forward())
         camera:SetAngles((self:GetOwner():EyeAngles():Forward() * -1):Angle())
@@ -43,7 +43,7 @@ function SWEP:PrimaryAttack()
         self.camera = camera
     end
 
-    for _, v in ipairs(ents.FindByClass("ttt_camera")) do
+    for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         if v:GetPlayer() == self:GetOwner() and v ~= self.camera then
             v:Remove() -- if the player already has a camera, remove it
         end
