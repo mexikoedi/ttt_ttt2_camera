@@ -1,6 +1,10 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
 include("shared.lua")
 SWEP.PrintName = "Camera"
+SWEP.Author = "mexikoedi"
+SWEP.Contact = "Steam"
+SWEP.Instructions = "Left click to place the camera on walls."
+SWEP.Purpose = "You can watch the other terrorists."
 SWEP.Slot = 7
 SWEP.ViewModelFOV = 10
 SWEP.ViewModelFlip = false
@@ -9,7 +13,7 @@ SWEP.Icon = "vgui/ttt/weapon_camera"
 SWEP.EquipMenuData = {
     type = "item_weapon",
     name = "Camera",
-    desc = "Use this to watch people get killed live. Left Click to place."
+    desc = "Use this to watch terrorists get killed live. Left click to place."
 }
 
 function SWEP:PrimaryAttack()

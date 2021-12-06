@@ -1,9 +1,13 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
-ENT.Type = "anim"
 ENT.Base = "base_anim"
+ENT.Type = "anim"
 ENT.PrintName = "Camera"
 ENT.Author = "mexikoedi"
+ENT.Contact = "Steam"
+ENT.Instructions = "Is only used for the camera item."
+ENT.Purpose = "Camera entity for the camera item."
 ENT.Spawnable = false
+ENT.AdminOnly = false
 ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
@@ -24,15 +28,13 @@ function ENT:Initialize()
     self:Activate()
     self.OriginalY = self:GetAngles().y
 
-    -- self:SetPlayer(Entity(1))
-    -- self:SetWelded(true)
     timer.Simple(0, function()
         self:GetPhysicsObject():SetMass(25)
     end)
 
     if SERVER then
         self:SetUseType(SIMPLE_USE)
-        self.HP = 80 -- you can change this to your likings
+        self.HP = 80 -- you can change the health of the camera to your likings
     end
 end
 
