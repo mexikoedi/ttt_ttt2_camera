@@ -1,6 +1,6 @@
-# TTT_TTT2_Camera
+# ttt_ttt2_camera
 
-TTT_TTT2_Camera Addon for Garry's Mod.
+ttt_ttt2_camera addon for Garry's Mod.
 
 More information are available here: 
 https://steamcommunity.com/sharedfiles/filedetails/?id=2031255788
