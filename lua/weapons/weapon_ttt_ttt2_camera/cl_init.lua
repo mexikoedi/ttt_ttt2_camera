@@ -9,7 +9,6 @@ SWEP.Slot = 7
 SWEP.ViewModelFOV = 10
 SWEP.ViewModelFlip = false
 SWEP.Icon = "vgui/ttt/weapon_camera"
-
 SWEP.EquipMenuData = {
     type = "item_weapon",
     name = "Camera",
@@ -22,10 +21,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Deploy()
-    if IsValid(self:GetOwner()) then
-        self:GetOwner():DrawViewModel(false)
-    end
-
+    if IsValid(self:GetOwner()) then self:GetOwner():DrawViewModel(false) end
     return true
 end
 
@@ -33,14 +29,11 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:OnRemove()
-    if IsValid(self:GetOwner()) and self:GetOwner() == LocalPlayer() then
-        self:GetOwner():ConCommand("lastinv")
-    end
+    if IsValid(self:GetOwner()) and self:GetOwner() == LocalPlayer() then self:GetOwner():ConCommand("lastinv") end
 end
 
 surface.SetFont("TabLarge")
 local w = surface.GetTextSize("MOVE THE MOUSE UP AND DOWN TO PITCH THE CAMERA")
-
 function SWEP:DrawHUD()
     if self.DrawInstructions then
         surface.SetFont("TabLarge")
@@ -52,8 +45,5 @@ end
 
 net.Receive("TTTCamera.Instructions", function()
     local p = LocalPlayer()
-
-    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then
-        p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = false
-    end
+    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = false end
 end)

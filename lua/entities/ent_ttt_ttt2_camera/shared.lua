@@ -9,7 +9,6 @@ ENT.Purpose = "Camera entity for the camera item."
 ENT.Spawnable = false
 ENT.AdminOnly = false
 ENT.AdminSpawnable = false
-
 function ENT:SetupDataTables()
     self:NetworkVar("Bool", 0, "Welded")
     self:NetworkVar("Entity", 0, "Player")
@@ -27,11 +26,7 @@ function ENT:Initialize()
     self:SetModelScale(.33, 0)
     self:Activate()
     self.OriginalY = self:GetAngles().y
-
-    timer.Simple(0, function()
-        self:GetPhysicsObject():SetMass(25)
-    end)
-
+    timer.Simple(0, function() self:GetPhysicsObject():SetMass(25) end)
     if SERVER then
         self:SetUseType(SIMPLE_USE)
         self.HP = 80 -- you can change the health of the camera to your likings

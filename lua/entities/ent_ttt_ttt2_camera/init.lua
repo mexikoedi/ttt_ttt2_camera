@@ -4,11 +4,9 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 util.AddNetworkString("TTTCameraDetach")
 util.AddNetworkString("TTTCamera.Instructions")
-
 function ENT:Use(user)
     if user:IsDetective() and user == self:GetPlayer() then
         self:Remove()
-
         if not self:GetShouldPitch() then
             user:Give("weapon_ttt_ttt2_camera")
         else
@@ -22,7 +20,6 @@ end
 
 function ENT:OnTakeDamage(dmginfo)
     if self:GetShouldPitch() then return end
-
     if dmginfo:GetDamageType() ~= DMG_BURN then
         if IsValid(self:GetPlayer()) and self:GetWelded() then
             net.Start("TTTCameraDetach")
@@ -35,7 +32,6 @@ function ENT:OnTakeDamage(dmginfo)
     end
 
     self.HP = self.HP - dmginfo:GetDamage()
-
     if self.HP <= 0 then
         local ed = EffectData()
         ed:SetStart(self:GetPos())
