@@ -18,7 +18,7 @@ hook.Add("HUDPaint", "DrawCameraScreen", function()
     for k, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         if LocalPlayer():IsSpec() then return end
         if GetRoundState() ~= ROUND_ACTIVE then return end
-        if IsValid(ent) and ent:GetPlayer() == LocalPlayer() and ent:GetWelded() and LocalPlayer():Alive() and not RENDER_CONNECTION_LOST then
+        if IsValid(ent) and ent:GetPlayer() == LocalPlayer() and ent:GetWelded() and LocalPlayer():IsActive() and not RENDER_CONNECTION_LOST then
             cam.Start2D()
             IN_CAMERA = true
             LocalPlayer():DrawShadow(false)
@@ -43,7 +43,7 @@ hook.Add("HUDPaint", "DrawCameraScreen", function()
         end
     end
 
-    if RENDER_CONNECTION_LOST and LocalPlayer():Alive() then
+    if RENDER_CONNECTION_LOST and LocalPlayer():IsActive() then
         surface.SetDrawColor(Color(0, 0, 0))
         surface.DrawRect(ScrW() - x - 18, 14, x, ScrH() / 3.7)
         surface.SetDrawColor(Color(160, 160, 160))

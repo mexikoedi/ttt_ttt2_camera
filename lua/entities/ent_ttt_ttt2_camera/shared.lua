@@ -45,7 +45,7 @@ if SERVER then
 
     hook.Add("SetupMove", "TTTCamera.Rotate", function(ply, mv)
         for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-            if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:Alive() then
+            if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:IsActive() then
                 local ang = v:GetAngles()
                 ang:RotateAroundAxis(ang:Right(), ply:GetCurrentCommand():GetMouseY() * -.15)
                 ang.p = math.Clamp(ang.p, -75, 75)
@@ -59,14 +59,14 @@ end
 
 hook.Add("PlayerSwitchWeapon", "TTTCamera.RotateNoSwitch", function(ply)
     for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-        if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:Alive() then return true end
+        if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:IsActive() then return true end
     end
 end)
 
 if CLIENT then
     hook.Add("CreateMove", "TTTCamera.Rotate", function(cmd)
         for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-            if v.GetPlayer and IsValid(v:GetPlayer()) and v:GetPlayer() == LocalPlayer() and v:GetShouldPitch() and LocalPlayer():Alive() then
+            if v.GetPlayer and IsValid(v:GetPlayer()) and v:GetPlayer() == LocalPlayer() and v:GetShouldPitch() and LocalPlayer():IsActive() then
                 local ang = (v:GetPos() - LocalPlayer():EyePos()):Angle()
                 local ang2 = Angle(math.NormalizeAngle(ang.p), math.NormalizeAngle(ang.y), math.NormalizeAngle(ang.r))
                 cmd:SetViewAngles(ang2)
