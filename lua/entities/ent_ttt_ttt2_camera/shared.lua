@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Camera"
 ENT.Author = "mexikoedi"
 ENT.Contact = "Steam"
-ENT.Instructions = "Is only used for the camera item."
+ENT.Instructions = "Only used for the camera item."
 ENT.Purpose = "Camera entity for the camera item."
 ENT.Spawnable = false
 ENT.AdminOnly = false
@@ -31,9 +31,6 @@ function ENT:Initialize()
         self:SetUseType(SIMPLE_USE)
         self.HP = 80 -- you can change the health of the camera to your likings
     end
-end
-
-function ENT:Think()
 end
 
 if SERVER then

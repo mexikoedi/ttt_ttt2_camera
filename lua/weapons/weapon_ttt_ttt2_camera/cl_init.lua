@@ -15,17 +15,9 @@ SWEP.EquipMenuData = {
     desc = "Use this to watch terrorists get killed live. Left click to place."
 }
 
-function SWEP:PrimaryAttack()
-    self.DrawInstructions = true
-    RENDER_CONNECTION_LOST = false
-end
-
 function SWEP:Deploy()
     if IsValid(self:GetOwner()) then self:GetOwner():DrawViewModel(false) end
     return true
-end
-
-function SWEP:DrawWorldModel()
 end
 
 function SWEP:OnRemove()
@@ -46,4 +38,13 @@ end
 net.Receive("TTTCamera.Instructions", function()
     local p = LocalPlayer()
     if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = false end
+end)
+
+net.Receive("TTTCamera.Instructions.Update", function()
+    local p = LocalPlayer()
+    local shouldDraw = net.ReadBool()
+    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then
+        p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = shouldDraw
+        RENDER_CONNECTION_LOST = false
+    end
 end)

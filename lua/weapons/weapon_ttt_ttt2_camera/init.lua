@@ -4,6 +4,7 @@ AddCSLuaFile("cl_init.lua")
 include("shared.lua")
 resource.AddFile("materials/vgui/ttt/weapon_camera.vmt")
 resource.AddFile("materials/tttcamera/cameranoise.vmt")
+util.AddNetworkString("TTTCamera.Instructions.Update")
 function SWEP:Deploy()
     self:GetOwner():DrawViewModel(false)
     self:GetOwner():DrawWorldModel(false)
@@ -35,6 +36,13 @@ function SWEP:PrimaryAttack()
         timer.Simple(0, function() constraint.Weld(camera, tr.Entity, 0, 0, 0, true) end)
         camera:SetShouldPitch(true)
         self.camera = camera
+        net.Start("TTTCamera.Instructions.Update")
+        net.WriteBool(true)
+        net.Send(self:GetOwner())
+    else
+        net.Start("TTTCamera.Instructions.Update")
+        net.WriteBool(false)
+        net.Send(self:GetOwner())
     end
 
     for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do

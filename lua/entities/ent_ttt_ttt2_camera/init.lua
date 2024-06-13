@@ -5,7 +5,7 @@ include("shared.lua")
 util.AddNetworkString("TTTCameraDetach")
 util.AddNetworkString("TTTCamera.Instructions")
 function ENT:Use(user)
-    if user:IsDetective() and user == self:GetPlayer() then
+    if user == self:GetPlayer() then
         self:Remove()
         if not self:GetShouldPitch() then
             user:Give("weapon_ttt_ttt2_camera")

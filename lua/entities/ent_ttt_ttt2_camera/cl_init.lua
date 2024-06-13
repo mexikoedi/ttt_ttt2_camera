@@ -16,8 +16,6 @@ local NOISE = Material("tttcamera/cameranoise")
 hook.Add("HUDPaint", "DrawCameraScreen", function()
     local x = ScrW() / 3.7
     for k, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-        if LocalPlayer():IsSpec() then return end
-        if GetRoundState() ~= ROUND_ACTIVE then return end
         if IsValid(ent) and ent:GetPlayer() == LocalPlayer() and ent:GetWelded() and LocalPlayer():IsActive() and not RENDER_CONNECTION_LOST then
             cam.Start2D()
             IN_CAMERA = true
@@ -64,7 +62,7 @@ net.Receive("TTTCameraDetach", function()
     if RENDER_CONNECTION_LOST then return end
     surface.PlaySound("ambient/energy/spark5.wav")
     RENDER_CONNECTION_LOST = true
-    timer.Simple(10, function() RENDER_CONNECTION_LOST = false end)
+    timer.Simple(5, function() RENDER_CONNECTION_LOST = false end)
 end)
 
 hook.Add("ShouldDrawLocalPlayer", "TTTCamera.DrawLocalPlayer", function(ply) return IN_CAMERA end)
