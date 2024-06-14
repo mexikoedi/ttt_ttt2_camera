@@ -15,6 +15,12 @@ SWEP.EquipMenuData = {
     desc = "Use this to watch terrorists get killed live. Left click to place."
 }
 
+function SWEP:PrimaryAttack()
+end
+
+function SWEP:DrawWorldModel()
+end
+
 function SWEP:Deploy()
     if IsValid(self:GetOwner()) then self:GetOwner():DrawViewModel(false) end
     return true

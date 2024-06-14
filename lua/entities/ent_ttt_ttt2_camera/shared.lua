@@ -9,6 +9,9 @@ ENT.Purpose = "Camera entity for the camera item."
 ENT.Spawnable = false
 ENT.AdminOnly = false
 ENT.AdminSpawnable = false
+function ENT:Think()
+end
+
 function ENT:SetupDataTables()
     self:NetworkVar("Bool", 0, "Welded")
     self:NetworkVar("Entity", 0, "Player")
