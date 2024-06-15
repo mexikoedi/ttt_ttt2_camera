@@ -9,15 +9,7 @@ ENT.Purpose = "Camera entity for the camera item."
 ENT.Spawnable = false
 ENT.AdminOnly = false
 ENT.AdminSpawnable = false
-function ENT:Think()
-end
-
-function ENT:SetupDataTables()
-    self:NetworkVar("Bool", 0, "Welded")
-    self:NetworkVar("Entity", 0, "Player")
-    self:NetworkVar("Bool", 1, "ShouldPitch")
-end
-
+ENT.IsReady = false
 function ENT:Initialize()
     self.CanPickup = false
     self:SetModel("models/dav0r/camera.mdl")
@@ -29,54 +21,36 @@ function ENT:Initialize()
     self:SetModelScale(.33, 0)
     self:Activate()
     self.OriginalY = self:GetAngles().y
-    timer.Simple(0, function() self:GetPhysicsObject():SetMass(25) end)
+    self:SetupPhysics()
     if SERVER then
         self:SetUseType(SIMPLE_USE)
-        self.HP = 80 -- you can change the health of the camera to your likings
+        self.HP = 100
     end
 end
 
-if SERVER then
-    hook.Add("SetupPlayerVisibility", "TTTCamera.VISLEAF", function()
-        for k, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-            AddOriginToPVS(v:GetPos() + v:GetAngles():Forward() * 3)
-        end
-    end)
-
-    hook.Add("SetupMove", "TTTCamera.Rotate", function(ply, mv)
-        for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-            if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:IsActive() then
-                local ang = v:GetAngles()
-                ang:RotateAroundAxis(ang:Right(), ply:GetCurrentCommand():GetMouseY() * -.15)
-                ang.p = math.Clamp(ang.p, -75, 75)
-                ang.r = 0
-                ang.y = v.OriginalY
-                v:SetAngles(ang)
-            end
-        end
-    end)
+function ENT:SetupDataTables()
+    self:NetworkVar("Bool", 0, "Welded")
+    self:NetworkVar("Entity", 0, "Player")
+    self:NetworkVar("Bool", 1, "ShouldPitch")
+    self.IsReady = true
 end
 
-hook.Add("PlayerSwitchWeapon", "TTTCamera.RotateNoSwitch", function(ply)
+function ENT:SetupPhysics()
+    local phys = self:GetPhysicsObject()
+    if IsValid(phys) then
+        phys:SetMass(25)
+    else
+        timer.Simple(0.1, function() if IsValid(self) and IsValid(self:GetPhysicsObject()) then self:GetPhysicsObject():SetMass(25) end end)
+    end
+end
+
+hook.Add("PlayerSwitchWeapon", "TTT2CameraRotateNoSwitch", function(ply)
     for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-        if v.GetPlayer and v.GetShouldPitch and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:IsActive() then return true end
+        if v.IsReady and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:IsActive() then return true end
     end
 end)
 
-if CLIENT then
-    hook.Add("CreateMove", "TTTCamera.Rotate", function(cmd)
-        for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-            if v.GetPlayer and IsValid(v:GetPlayer()) and v:GetPlayer() == LocalPlayer() and v:GetShouldPitch() and LocalPlayer():IsActive() then
-                local ang = (v:GetPos() - LocalPlayer():EyePos()):Angle()
-                local ang2 = Angle(math.NormalizeAngle(ang.p), math.NormalizeAngle(ang.y), math.NormalizeAngle(ang.r))
-                cmd:SetViewAngles(ang2)
-                cmd:ClearMovement()
-            end
-        end
-    end)
-end
-
-hook.Add("ShouldCollide", "TTTCamera.Collide", function(e1, e2)
+hook.Add("ShouldCollide", "TTT2CameraCollide", function(e1, e2)
     if e1:IsPlayer() and e2:GetClass() == "ent_ttt_ttt2_camera" then return true end
     if e2:IsPlayer() and e1:GetClass() == "ent_ttt_ttt2_camera" then return true end
 end)

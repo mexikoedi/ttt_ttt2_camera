@@ -1,6 +1,6 @@
 "UnlitGeneric" 
 {
-	"$basetexture" "tttcamera/cameranoise"
+	"$basetexture" "camera/noise"
 	"$vertexalpha" 1
 	"$translucent" 1
 	"$additive" 1

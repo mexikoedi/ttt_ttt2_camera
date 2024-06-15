@@ -12,7 +12,7 @@ surface.CreateFont("DermaExtraLarge", {
 })
 
 local RENDER_CONNECTION_LOST = false
-local NOISE = Material("tttcamera/cameranoise")
+local NOISE = Material("camera/noise")
 hook.Add("HUDPaint", "DrawCameraScreen", function()
     local x = ScrW() / 3.7
     for k, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
@@ -58,11 +58,23 @@ hook.Add("HUDPaint", "DrawCameraScreen", function()
     end
 end)
 
-net.Receive("TTTCameraDetach", function()
+hook.Add("CreateMove", "TTT2CameraRotate", function(cmd)
+    for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
+        if v.IsReady and IsValid(v:GetPlayer()) and v:GetPlayer() == LocalPlayer() and v:GetShouldPitch() and LocalPlayer():IsActive() then
+            local ang = (v:GetPos() - LocalPlayer():EyePos()):Angle()
+            local ang2 = Angle(math.NormalizeAngle(ang.p), math.NormalizeAngle(ang.y), math.NormalizeAngle(ang.r))
+            cmd:SetViewAngles(ang2)
+            cmd:ClearMovement()
+        end
+    end
+end)
+
+hook.Add("ShouldDrawLocalPlayer", "TTT2CameraDrawLocalPlayer", function(ply) return IN_CAMERA end)
+net.Receive("TTT2CameraDetachment", function()
     if RENDER_CONNECTION_LOST then return end
     surface.PlaySound("ambient/energy/spark5.wav")
     RENDER_CONNECTION_LOST = true
-    timer.Simple(5, function() RENDER_CONNECTION_LOST = false end)
+    timer.Simple(2.5, function() RENDER_CONNECTION_LOST = false end)
 end)
 
-hook.Add("ShouldDrawLocalPlayer", "TTTCamera.DrawLocalPlayer", function(ply) return IN_CAMERA end)
+net.Receive("TTT2CameraPickUp", function() RENDER_CONNECTION_LOST = false end)

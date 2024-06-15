@@ -15,42 +15,58 @@ SWEP.EquipMenuData = {
     desc = "Use this to watch terrorists get killed live. Left click to place."
 }
 
-function SWEP:PrimaryAttack()
-end
-
-function SWEP:DrawWorldModel()
-end
-
-function SWEP:Deploy()
-    if IsValid(self:GetOwner()) then self:GetOwner():DrawViewModel(false) end
-    return true
-end
-
-function SWEP:OnRemove()
-    if IsValid(self:GetOwner()) and self:GetOwner() == LocalPlayer() then self:GetOwner():ConCommand("lastinv") end
-end
-
-surface.SetFont("TabLarge")
-local w = surface.GetTextSize("MOVE THE MOUSE UP AND DOWN TO PITCH THE CAMERA")
+surface.SetFont("Trebuchet22")
+local w = surface.GetTextSize("LEFT CLICK TO PLACE THE CAMERA")
+local x = surface.GetTextSize("MOVE THE MOUSE UP AND DOWN TO PITCH THE CAMERA")
 function SWEP:DrawHUD()
-    if self.DrawInstructions then
-        surface.SetFont("TabLarge")
+    local owner = self:GetOwner()
+    local tr = util.TraceLine({
+        start = owner:GetShootPos(),
+        endpos = owner:GetShootPos() + owner:GetAimVector() * 100,
+        filter = owner
+    })
+
+    if tr.HitWorld and not self:CameraPlaced() then
+        surface.SetFont("Trebuchet22")
         surface.SetTextColor(Color(50, 60, 200, 255))
         surface.SetTextPos(ScrW() / 2 - w / 2, ScrH() / 2 + 50)
+        surface.DrawText("LEFT CLICK TO PLACE THE CAMERA")
+    end
+
+    if self:CameraPlaced() then
+        surface.SetFont("Trebuchet22")
+        surface.SetTextColor(Color(50, 60, 200, 255))
+        surface.SetTextPos(ScrW() / 2 - x / 2, ScrH() / 2 + 50)
         surface.DrawText("MOVE THE MOUSE UP AND DOWN TO PITCH THE CAMERA")
     end
 end
 
-net.Receive("TTTCamera.Instructions", function()
-    local p = LocalPlayer()
-    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = false end
-end)
-
-net.Receive("TTTCamera.Instructions.Update", function()
-    local p = LocalPlayer()
-    local shouldDraw = net.ReadBool()
-    if p.GetWeapon and IsValid(p:GetWeapon("weapon_ttt_ttt2_camera")) then
-        p:GetWeapon("weapon_ttt_ttt2_camera").DrawInstructions = shouldDraw
-        RENDER_CONNECTION_LOST = false
+function SWEP:DrawWorldModel()
+    local owner = self:GetOwner()
+    if IsValid(owner) then
+        if self:CameraPlaced() then return end
+        self:DrawCameraWorldModel()
+    else
+        self:DrawModel()
     end
-end)
+end
+
+function SWEP:DrawCameraWorldModel()
+    local rightHandBone = self:GetOwner():LookupBone("ValveBiped.Bip01_R_Hand")
+    if not rightHandBone then return end
+    local rightHandPos, rightHandAngle = self:GetOwner():GetBonePosition(rightHandBone)
+    if not rightHandPos or not rightHandAngle then return end
+    rightHandPos = rightHandPos + rightHandAngle:Forward() * 6.97 + rightHandAngle:Up() * -4.34 + rightHandAngle:Right() * 2.2
+    if not IsValid(self.CustomWorldModel) then
+        self.CustomWorldModel = ClientsideModel(self.WorldModel, RENDERGROUP_OPAQUE)
+        self.CustomWorldModel:SetModelScale(0.7)
+    end
+
+    local modelSettings = {
+        model = self.WorldModel,
+        pos = rightHandPos,
+        angle = self:GetOwner():EyeAngles()
+    }
+
+    render.Model(modelSettings, self.CustomWorldModel)
+end
