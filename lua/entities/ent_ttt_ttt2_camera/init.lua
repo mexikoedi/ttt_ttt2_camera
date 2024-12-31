@@ -40,19 +40,19 @@ function ENT:OnTakeDamage(dmginfo)
 end
 
 function CameraCleanup()
-    for k, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
+    for _, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         ent:Remove()
     end
 end
 
 hook.Add("TTTPrepareRound", "TTT2CameraCleanup", CameraCleanup)
 hook.Add("SetupPlayerVisibility", "TTT2CameraSetupPlayerVisibility", function()
-    for k, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
+    for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         AddOriginToPVS(v:GetPos() + v:GetAngles():Forward() * 3)
     end
 end)
 
-hook.Add("SetupMove", "TTT2CameraRotating", function(ply, mv)
+hook.Add("SetupMove", "TTT2CameraRotating", function(ply)
     for _, v in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         if v.IsReady and IsValid(v:GetPlayer()) and v:GetPlayer() == ply and v:GetShouldPitch() and ply:IsActive() then
             local ang = v:GetAngles()

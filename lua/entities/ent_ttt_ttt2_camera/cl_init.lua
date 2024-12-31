@@ -15,7 +15,7 @@ local RENDER_CONNECTION_LOST = false
 local NOISE = Material("camera/noise")
 hook.Add("HUDPaint", "DrawCameraScreen", function()
     local x = ScrW() / 3.7
-    for k, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
+    for _, ent in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
         if IsValid(ent) and ent:GetPlayer() == LocalPlayer() and ent:GetWelded() and LocalPlayer():IsActive() and not RENDER_CONNECTION_LOST then
             cam.Start2D()
             IN_CAMERA = true
@@ -69,7 +69,7 @@ hook.Add("CreateMove", "TTT2CameraRotate", function(cmd)
     end
 end)
 
-hook.Add("ShouldDrawLocalPlayer", "TTT2CameraDrawLocalPlayer", function(ply) return IN_CAMERA end)
+hook.Add("ShouldDrawLocalPlayer", "TTT2CameraDrawLocalPlayer", function() return IN_CAMERA end)
 net.Receive("TTT2CameraDetachment", function()
     if RENDER_CONNECTION_LOST then return end
     surface.PlaySound("ambient/energy/spark5.wav")
