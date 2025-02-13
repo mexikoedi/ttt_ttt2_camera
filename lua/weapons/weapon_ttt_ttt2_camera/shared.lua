@@ -32,6 +32,8 @@ function SWEP:PrimaryAttack()
     if not IsFirstTimePredicted() then return end
     if SERVER then
         local owner = self:GetOwner()
+        if not IsValid(owner) then return end
+        owner:LagCompensation(true)
         if not self:CameraPlaced() then
             local tr = util.TraceLine({
                 start = owner:GetShootPos(),
@@ -67,6 +69,7 @@ function SWEP:PrimaryAttack()
         end
 
         self:SetNextPrimaryFire(CurTime() + 1)
+        owner:LagCompensation(false)
     end
 end
 
