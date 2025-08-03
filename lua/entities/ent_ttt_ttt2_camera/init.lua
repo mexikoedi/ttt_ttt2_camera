@@ -16,7 +16,8 @@ end
 function ENT:OnTakeDamage(dmginfo)
     if self:GetShouldPitch() then return end
     if not IsValid(dmginfo:GetAttacker()) then return end
-    if not dmginfo:GetAttacker():IsActive() then return end
+    local phys = self:GetPhysicsObject()
+    if IsValid(phys) then phys:EnableMotion(true) end
     if dmginfo:GetDamageType() ~= DMG_BURN and self:GetWelded() then
         if IsValid(self:GetPlayer()) then
             net.Start("TTT2CameraDetachment")

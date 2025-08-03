@@ -38,9 +38,15 @@ end
 function ENT:SetupPhysics()
     local phys = self:GetPhysicsObject()
     if IsValid(phys) then
+        phys:EnableMotion(false)
         phys:SetMass(25)
     else
-        timer.Simple(0.1, function() if IsValid(self) and IsValid(self:GetPhysicsObject()) then self:GetPhysicsObject():SetMass(25) end end)
+        timer.Simple(0.1, function()
+            if IsValid(self) and IsValid(self:GetPhysicsObject()) then
+                self:GetPhysicsObject():EnableMotion(false)
+                self:GetPhysicsObject():SetMass(25)
+            end
+        end)
     end
 end
 
