@@ -9,7 +9,7 @@ SWEP.AutoSpawnable = false
 SWEP.AdminOnly = false
 SWEP.CanBuy = {ROLE_DETECTIVE}
 SWEP.LimitedStock = true
-SWEP.AllowDrop = false
+SWEP.AllowDrop = true
 function SWEP:Initialize()
     self:SetModelScale(0.7)
     self:SetHoldType("camera")
