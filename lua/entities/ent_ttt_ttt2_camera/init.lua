@@ -68,6 +68,9 @@ end)
 
 hook.Add("PlayerDeath", "TTT2CameraResetOnDeath", function(victim)
     for _, camera in ipairs(ents.FindByClass("ent_ttt_ttt2_camera")) do
-        if camera:GetPlayer() == victim and camera:GetShouldPitch() then camera:SetShouldPitch(false) end
+        if camera:GetPlayer() == victim and camera:GetShouldPitch() then
+            camera:SetShouldPitch(false)
+            camera:Remove()
+        end
     end
 end)
