@@ -40,8 +40,8 @@ local function RenderCameraFeed(ent, panel, w, h)
     local titleBarHeight = 24
     local viewX = viewPadding
     local viewY = titleBarHeight + viewPadding
-    local viewW = w - viewPadding * 2
-    local viewH = h - viewY - viewPadding
+    local viewW = math.max(1, w - viewPadding * 2)
+    local viewH = math.max(1, h - viewY - viewPadding)
     local screenX, screenY = panel:LocalToScreen(viewX, viewY)
     RenderWithoutOutlines(function()
         IS_DRAWING_CAMERA = true
@@ -58,6 +58,7 @@ local function RenderCameraFeed(ent, panel, w, h)
         cdata.h = viewH
         cdata.fov = 90
         cdata.znear = .1
+        cdata.aspect = viewW / viewH
         render.RenderView(cdata)
         IS_DRAWING_CAMERA = false
         surface.SetDrawColor(Color(255, 255, 255, 3))
