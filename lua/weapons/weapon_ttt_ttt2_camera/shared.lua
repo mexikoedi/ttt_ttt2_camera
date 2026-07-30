@@ -68,7 +68,7 @@ function SWEP:PrimaryAttack()
             if v:GetPlayer() == owner and v ~= self:GetCamera() then v:Remove() end
         end
 
-        self:SetNextPrimaryFire(CurTime() + 1)
+        self:SetNextPrimaryFire(CurTime() + 0.1)
         owner:LagCompensation(false)
     end
 end

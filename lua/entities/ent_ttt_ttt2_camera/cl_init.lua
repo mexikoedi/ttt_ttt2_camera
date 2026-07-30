@@ -4,17 +4,11 @@ function ENT:Draw()
     self:DrawModel()
 end
 
-surface.CreateFont("DermaExtraLarge", {
-    font = "Roboto",
-    size = 48,
-    weight = 800,
-    antialias = true
-})
-
-local RENDER_CONNECTION_LOST = false
-local NOISE = Material("camera/noise")
-local IS_DRAWING_CAMERA = false
 local CAMERA_WINDOW
+local CAMERA_NOISE = Material("camera/noise")
+local IS_CAMERA_DRAWING = false
+local IS_CAMERA_ACTIVE = false
+local IS_CAMERA_CONNECTION_LOST = false
 local function GetActiveCameraEntity()
     local ply = LocalPlayer()
     if not IsValid(ply) or not ply:IsActive() then return end
@@ -24,13 +18,15 @@ local function GetActiveCameraEntity()
 end
 
 local function RenderWithoutOutlines(fn)
-    if not outline or not outline.Add then return fn() end
-    local oldAdd = outline.Add
-    outline.Add = function() end
+    local oldOutlineAdd = outline and outline.Add
+    local oldHaloAdd = halo and halo.Add
+    if oldOutlineAdd then outline.Add = function() end end
+    if oldHaloAdd then halo.Add = function() end end
     local ok, err = xpcall(fn, debug.traceback)
-    outline.Add = oldAdd
+    if oldOutlineAdd then outline.Add = oldOutlineAdd end
+    if oldHaloAdd then halo.Add = oldHaloAdd end
     if not ok then
-        IS_DRAWING_CAMERA = false
+        IS_CAMERA_DRAWING = false
         error(err, 0)
     end
 end
@@ -44,9 +40,8 @@ local function RenderCameraFeed(ent, panel, w, h)
     local viewH = math.max(1, h - viewY - viewPadding)
     local screenX, screenY = panel:LocalToScreen(viewX, viewY)
     RenderWithoutOutlines(function()
-        IS_DRAWING_CAMERA = true
-        LocalPlayer():DrawShadow(false)
-        surface.SetDrawColor(Color(0, 0, 0))
+        IS_CAMERA_DRAWING = true
+        surface.SetDrawColor(0, 0, 0)
         surface.DrawRect(viewX, viewY, viewW, viewH)
         surface.SetDrawColor(color_white)
         local cdata = {}
@@ -60,13 +55,13 @@ local function RenderCameraFeed(ent, panel, w, h)
         cdata.znear = .1
         cdata.aspect = viewW / viewH
         render.RenderView(cdata)
-        IS_DRAWING_CAMERA = false
-        surface.SetDrawColor(Color(255, 255, 255, 3))
-        surface.SetMaterial(NOISE)
+        IS_CAMERA_DRAWING = false
+        surface.SetDrawColor(255, 255, 255, 3)
+        surface.SetMaterial(CAMERA_NOISE)
         surface.DrawTexturedRect(viewX, viewY, viewW, viewH)
     end)
 
-    IS_DRAWING_CAMERA = false
+    IS_CAMERA_DRAWING = false
 end
 
 local function EnsureCameraWindow()
@@ -85,21 +80,40 @@ local function EnsureCameraWindow()
     CAMERA_WINDOW:SetKeyboardInputEnabled(false)
     CAMERA_WINDOW.PaintOver = function(self, w, h)
         local ent = GetActiveCameraEntity()
-        if not ent and not RENDER_CONNECTION_LOST then return end
-        if RENDER_CONNECTION_LOST then
-            surface.SetDrawColor(Color(0, 0, 0))
-            surface.DrawRect(8, 24, w - 16, h - 32)
-            surface.SetDrawColor(Color(160, 160, 160))
-            surface.SetMaterial(NOISE)
-            surface.DrawTexturedRect(9, 25, w - 18, h - 34)
-            surface.SetFont("DermaExtraLarge")
+        if not ent and not IS_CAMERA_CONNECTION_LOST then return end
+        if IS_CAMERA_CONNECTION_LOST then
+            local x = 8
+            local y = 24
+            local vw = w - 16
+            local vh = h - 32
+            surface.SetDrawColor(0, 0, 0)
+            surface.DrawRect(x, y, vw, vh)
+            surface.SetDrawColor(160, 160, 160)
+            surface.SetMaterial(CAMERA_NOISE)
+            surface.DrawTexturedRect(x + 1, y + 1, vw - 2, vh - 2)
             local text = "CONNECTION LOST"
-            local textW, textH = surface.GetTextSize(text)
-            surface.SetTextPos(w / 2 - textW / 2 - 2, h / 2 - textH / 2 - 1)
-            surface.SetTextColor(Color(0, 0, 0))
+            local fontSize = math.Clamp(math.floor(math.min(vw * 0.09, vh * 0.4)), 14, 48)
+            local fontName = "TTT2CameraStatus_" .. fontSize
+            if not _G[fontName] then
+                surface.CreateFont(fontName, {
+                    font = "Roboto",
+                    size = fontSize,
+                    weight = 800,
+                    antialias = true
+                })
+
+                _G[fontName] = true
+            end
+
+            surface.SetFont(fontName)
+            local tw, th = surface.GetTextSize(text)
+            local tx = x + (vw - tw) * 0.5
+            local ty = y + (vh - th) * 0.5
+            surface.SetTextColor(0, 0, 0)
+            surface.SetTextPos(tx - 2, ty - 2)
             surface.DrawText(text)
-            surface.SetTextPos(w / 2 - textW / 2, h / 2 - textH / 2)
-            surface.SetTextColor(Color(255, 0, 0))
+            surface.SetTextColor(255, 0, 0)
+            surface.SetTextPos(tx, ty)
             surface.DrawText(text)
             return
         end
@@ -113,8 +127,8 @@ hook.Add("Think", "TTT2CameraWindowState", function()
     local window = EnsureCameraWindow()
     local ply = LocalPlayer()
     local ent = GetActiveCameraEntity()
-    local shouldShow = IsValid(ply) and ply:IsActive() and (IsValid(ent) or RENDER_CONNECTION_LOST)
-    window:SetVisible(shouldShow)
+    IS_CAMERA_ACTIVE = IsValid(ply) and ply:IsActive() and (IsValid(ent) or IS_CAMERA_CONNECTION_LOST)
+    window:SetVisible(IS_CAMERA_ACTIVE)
 end)
 
 hook.Add("CreateMove", "TTT2CameraRotate", function(cmd)
@@ -128,12 +142,40 @@ hook.Add("CreateMove", "TTT2CameraRotate", function(cmd)
     end
 end)
 
-hook.Add("ShouldDrawLocalPlayer", "TTT2CameraDrawLocalPlayer", function() return IS_DRAWING_CAMERA end)
+hook.Add("ShouldDrawLocalPlayer", "TTT2CameraDrawLocalPlayer", function(_) return IS_CAMERA_DRAWING end)
+hook.Add("TTT2ModifyOverheadIcon", "TTT2CameraHideOverheadIcons", function(_, _) if IS_CAMERA_DRAWING then return false end end)
+hook.Add("TTTRenderEntityInfo", "TTT2CameraSuppressTargetID", function(tData) if IS_CAMERA_ACTIVE then tData:EnableOutline(false) end end)
 net.Receive("TTT2CameraDetachment", function()
-    if RENDER_CONNECTION_LOST then return end
+    if IS_CAMERA_CONNECTION_LOST then return end
     surface.PlaySound("ambient/energy/spark5.wav")
-    RENDER_CONNECTION_LOST = true
-    timer.Simple(2.5, function() RENDER_CONNECTION_LOST = false end)
+    IS_CAMERA_CONNECTION_LOST = true
+    timer.Simple(2.5, function() IS_CAMERA_CONNECTION_LOST = false end)
 end)
 
-net.Receive("TTT2CameraPickUp", function() RENDER_CONNECTION_LOST = false end)
+net.Receive("TTT2CameraPickUp", function() IS_CAMERA_CONNECTION_LOST = false end)
+do
+    local function OverrideDrawBackground()
+        if not vguihandler or not vguihandler.DrawBackground then
+            timer.Simple(0.1, OverrideDrawBackground)
+            return
+        end
+
+        local origDrawBg = vguihandler.DrawBackground
+        vguihandler.DrawBackground = function()
+            if not vguihandler.IsOpen() then return end
+            if IS_CAMERA_ACTIVE then
+                local oldBlurredBox = draw.BlurredBox
+                local oldBox = draw.Box
+                draw.BlurredBox = function() end
+                draw.Box = function() end
+                origDrawBg()
+                draw.BlurredBox = oldBlurredBox
+                draw.Box = oldBox
+            else
+                origDrawBg()
+            end
+        end
+    end
+
+    OverrideDrawBackground()
+end
